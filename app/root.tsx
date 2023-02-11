@@ -9,11 +9,11 @@ import {
 	useLoaderData,
 } from '@remix-run/react';
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LoaderArgs, MetaFunction } from '@remix-run/node';
 import type { Database } from 'db_types';
+import { createBrowserClient } from '@supabase/auth-helpers-remix';
 
 type TypedSupabaseClient = SupabaseClient<Database>;
 export type SupabaseOutletContext = {
@@ -39,7 +39,7 @@ export default function App() {
 	const { env } = useLoaderData<typeof loader>();
 
 	const [supabase] = useState(() =>
-		createClient<Database>(env.SUPABASE_URL!, env.SUPABASE_ANON_KEY!)
+		createBrowserClient<Database>(env.SUPABASE_URL!, env.SUPABASE_ANON_KEY!)
 	);
 
 	return (
