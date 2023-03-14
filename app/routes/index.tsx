@@ -2,12 +2,21 @@ import type { LoaderArgs } from '@remix-run/node';
 
 import { useLoaderData } from '@remix-run/react';
 import { Login } from 'components/login';
-import supabase from 'utils/supabase.server';
+import { createServerClient } from '@supabase/auth-helpers-remix';
 
-export const loader = async ({}: LoaderArgs) => {
-	const { data } = await supabase.from('messages').select('*');
+export const loader = async ({ request }: LoaderArgs) => {
+  const response = new Response();
+  const supabase = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    {
+      request,
+      response,
+    }
+  );
+  const { data } = await supabase.from("messages").select("*");
 
-	return { messages: data ?? [] };
+  return { messages: data ?? [], headers: response.headers };
 };
 
 export default function Index() {
